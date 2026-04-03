@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCC Management Console - Fleet & Revenue Overview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- INTERNAL CSS RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            /* Palette from image_7.png */
+            --sidebar-bg: #1a1d21;
+            --main-bg: #f3f5f9;
+            --nav-bg: #2c3e50;
+            --accent-blue: #3498db;
+            --card-border: #dee2e6;
+            --warning-orange: #f39c12;
+            --success-green: #27ae60;
+        }
+
+        body {
+            background-color: var(--main-bg);
+            height: 100vh;
+            display: flex; /* Sidebar and Content are flex items */
+            overflow: hidden; /* Prevents whole-page scrolling */
+        }
+
+        /* --- SIDEBAR CSS --- */
+        #sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: #bdc3c7;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.2rem;
+            flex-shrink: 0; /* Keeps sidebar fixed width */
+        }
+
+        .sidebar-brand h2 {
+            color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-brand small {
+            color: #7f8c8d;
+        }
+
+        .nav-links {
+            margin-top: 3rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #bdc3c7;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link i {
+            width: 25px;
+            margin-right: 10px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background-color: var(--nav-bg);
+            font-weight: 600;
+        }
+
+        .logout-link {
+            margin-top: auto;
+            color: #e74c3c;
+            border-top: 1px solid #34495e;
+            padding-top: 1rem;
+        }
+
+        /* --- MAIN CONTENT CSS --- */
+        #main-content {
+            flex: 1; /* Occupies remaining width */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background-color: var(--nav-bg);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--sidebar-bg);
+        }
+
+        .dashboard-grid {
+            flex: 1; /* Occupies remaining height */
+            padding: 1.5rem;
+            display: grid;
+            grid-template-rows: auto auto auto; /* Metrics, Charts, List */
+            gap: 1.5rem;
+            overflow-y: auto; /* Allows only data area to scroll */
+        }
+
+        /* Metrics Row */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 cards in a row */
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.2rem;
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .metric-card h6 {
+            color: #7f8c8d;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .metric-card h2 {
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+
+        .metric-card.orange { border-top: 5px solid var(--warning-orange); }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 3fr 2fr; /* Map takes more space */
+            gap: 1.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .chart-header {
+            color: var(--sidebar-bg);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        /* Map Utility */
+        .map-wrapper {
+            background: #eee;
+            width: 100%;
+            height: 250px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            position: relative;
+        }
+
+        .map-pin {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: absolute;
+        }
+
+        /* active List (Table) */
+        .list-container {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .data-table th, .data-table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .data-table th {
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .badge-success { background-color: #e6f4ea; color: var(--success-green); }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar">
+        <div class="sidebar-brand">
+            <h2>TCC</h2>
+            <small>Transport Company Computerization</small>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item"><a href="#" class="nav-link active"><i class="fas fa-home"></i> Overview</a></li>
+            <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-map-marked-alt"></i> Fleet Monitoring</a></li>
+            <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Revenue Reports</a></li>
+            <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Operations Analytics</a></li>
+            <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-building"></i> Branch Records</a></li>
+            <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-cogs"></i> System Settings</a></li>
+        </ul>
+        <a href="#" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+
+    <main id="main-content">
+        <header class="top-navbar">
+            <h4>TCC Management Console: Fleet & Revenue Overview</h4>
+            <div>
+                Welcome, branch_staff_01 <i class="fas fa-user-circle ms-2 fs-5"></i>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="metrics-row">
+                <div class="metric-card">
+                    <h6>Total Revenue ($)</h6>
+                    <h2>KSh 360.00</h2>
+                </div>
+                <div class="metric-card">
+                    <h6>Active Shipments</h6>
+                    <h2>1</h2>
+                </div>
+                <div class="metric-card">
+                    <h6>Active Fleet (Trucks)</h6>
+                    <h2>8</h2>
+                </div>
+                <div class="metric-card orange">
+                    <h6>Avg. Idle Time (Trucks)</h6>
+                    <p>Is 12 minutes high?</p>
+                </div>
+                <div class="metric-card orange">
+                    <h6>Avg. Waiting Period</h6>
+                    <p>11 (consignments)</p>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-header"><i class="fas fa-truck me-2 text-primary"></i>Real-Time Fleet Status (SRS FR 10)</div>
+                    <div class="row d-flex">
+                        <div class="col-6 p-2">
+                            <div class="map-wrapper">
+                                Map Placeholder
+                                <div class="map-pin" style="background:var(--success-green); top: 30%; left: 30%;"></div>
+                                <div class="map-pin" style="background:var(--accent-blue); top: 50%; left: 50%;"></div>
+                                <div class="map-pin" style="background:var(--warning-orange); top: 70%; left: 70%;"></div>
+                            </div>
+                        </div>
+                        <div class="col-6 p-3 small">
+                            <ul class="list-unstyled">
+                                <li><span class="status-pin badge-success me-2 rounded-circle" style="padding: 5px;"></span> Available</li>
+                                <li><span class="status-pin bg-warning me-2 rounded-circle" style="padding: 5px;"></span> Loading</li>
+                                <li><span class="status-pin bg-primary me-2 rounded-circle" style="padding: 5px;"></span> In Transit</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header"><i class="fas fa-dollar-sign me-2 text-success"></i>Revenue Per Destination (SRS FR 15)</div>
+                    <p class="text-muted text-center py-5">Bar Chart (Nairobi, Mombasa, Kisumu, Eldoret, Machakos)</p>
+                </div>
+            </div>
+
+            <div class="list-container">
+                <div class="chart-header"><i class="fas fa-list me-2"></i>Active Truck List</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Truck ID</th>
+                            <th>Status</th>
+                            <th>Destination</th>
+                            <th>Loaded Vol (m³)</th>
+                            <th>Driver Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TCC-10245</td>
+                            <td><span class="status-badge badge-success">Available</span></td>
+                            <td>MOMBASA</td>
+                            <td>4,500</td>
+                            <td>Branch Iva, branch_staff_01</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TCC - Revenue Reports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --navy: #2c3e50; }
+        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; margin: 0; }
+        #sidebar { width: 260px; background: #1a1d21; color: white; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; }
+        .header-bar { background: var(--navy); color: white; padding: 15px 25px; display: flex; justify-content: space-between; }
+        .report-card { background: white; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 20px; }
+        .table-custom th { background: #f1f3f5; }
+    </style>
+</head>
+<body>
+    <aside id="sidebar" class="p-4 text-center"><h3>TCC</h3><hr><p>Revenue Console</p></aside>
+    <main class="main-content">
+        <header class="header-bar"><h5>Financial Reports: Revenue per Destination</h5><button class="btn btn-sm btn-light">Export PDF</button></header>
+        <div class="container-fluid p-4">
+            <div class="row g-3 mb-4">
+                <div class="col-md-4"><div class="card p-3 text-center"><h6>Daily Revenue</h6><h2 class="text-success">KSh 45,500</h2></div></div>
+                <div class="col-md-4"><div class="card p-3 text-center"><h6>Weekly Revenue</h6><h2>KSh 320,000</h2></div></div>
+                <div class="col-md-4"><div class="card p-3 text-center"><h6>Outstanding Invoices</h6><h2 class="text-danger">12</h2></div></div>
+            </div>
+            <div class="report-card shadow-sm p-4">
+                <h6 class="fw-bold mb-3">Revenue Breakdown per Branch</h6>
+                <table class="table table-hover table-custom">
+                    <thead><tr><th>Branch</th><th>Total Consignments</th><th>Volume (m³)</th><th>Total Revenue</th></tr></thead>
+                    <tbody>
+                        <tr><td>Nairobi</td><td>145</td><td>2,400</td><td>KSh 120,000</td></tr>
+                        <tr><td>Mombasa</td><td>98</td><td>1,800</td><td>KSh 95,000</td></tr>
+                        <tr><td>Kisumu</td><td>54</td><td>1,100</td><td>KSh 55,000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

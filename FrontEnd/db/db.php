@@ -157,20 +157,22 @@ function create_tables($conn) {
         FOREIGN KEY (UserID) REFERENCES SystemUser(UserID)
     );
     ";
-
-     try {
+    try {
         if ($conn->multi_query($sql) === TRUE) {
             while ($conn->more_results() && $conn->next_result());
-            echo 'All tables created successfully.';
+            echo 'All tables created successfully with strict relational symmetry.';
         } else {
             throw new Exception('Error creating tables: ' . $conn->error);
         }
     } catch (Exception $e) {
         echo '❌ ' . $e->getMessage();
     } finally {
+        // Re-enable foreign key checks
+        $conn->query("SET FOREIGN_KEY_CHECKS = 1;");
         $conn->close();
     }
 }
 
 create_tables($conn);
 ?>
+

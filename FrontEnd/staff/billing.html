@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TCC Staff - Billing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; display: flex; height: 100vh; margin: 0; }
+        #sidebar { width: 260px; background: #1a1d21; color: white; }
+        .main-content { flex-grow: 1; padding: 30px; }
+        .invoice-box { background: white; padding: 40px; border: 1px solid #ddd; max-width: 500px; margin: auto; }
+    </style>
+</head>
+<body>
+    <aside id="sidebar" class="p-4"><h3>TCC</h3><p>Billing Dept</p></aside>
+    <main class="main-content">
+        <div class="invoice-box shadow-sm">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">TCC LOGISTICS</h2>
+                <p class="text-muted">Payment Receipt</p>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mb-2"><span>Consignment ID:</span><strong>TCC-10245</strong></div>
+            <div class="d-flex justify-content-between mb-2"><span>Date:</span><strong>01-Apr-2026</strong></div>
+            <div class="d-flex justify-content-between mb-4"><span>Staff:</span><strong>staff_01</strong></div>
+            <table class="table table-sm">
+                <thead><tr><th>Description</th><th class="text-end">Amount</th></tr></thead>
+                <tbody>
+                    <tr><td>Transport (12 m³ @ 150)</td><td class="text-end">KSh 1,800</td></tr>
+                    <tr><td>Service Tax (16%)</td><td class="text-end">KSh 288</td></tr>
+                </tbody>
+            </table>
+            <div class="bg-light p-2 d-flex justify-content-between fw-bold"><span>Total Paid:</span><span>KSh 2,088</span></div>
+            <button class="btn btn-dark w-100 mt-4 no-print" onclick="window.print()"><i class="fas fa-print me-2"></i> Print Invoice</button>
+        </div>
+    </main>
+</body>
+</html>
